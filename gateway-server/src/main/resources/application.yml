@@ -1,0 +1,122 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: gateway-server
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+      routes:
+        - id: salon-service
+          uri: lb://SALON-SERVICE
+          predicates:
+            - Path=/salons/**,/admin/salons/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/auth/**,/admin/users/**,/users/**
+
+        - id: booking-service
+          uri: lb://BOOKING-SERVICE
+          predicates:
+            - Path=/booking/**
+
+        - id: category-service
+          uri: lb://CATEGORY-MICROSERVICE
+          predicates:
+            - Path=/categories/**
+
+        - id: service-offering
+          uri: lb://SERVICE-OFFERING
+          predicates:
+            - Path=/service-offering/**
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment/**
+
+eureka:
+  instance:
+    prefer-ip-address: true
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
+
+
+
+
+#server:
+#  port: 5000
+#
+#spring:
+#  application:
+#    name: gateway-server
+#
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#
+#      routes:
+#        - id: salon-service
+#          uri: lb://SALON-SERVICE
+#          predicates:
+#            - Path=/salons/**,/admin/salons/**
+#
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/auth/**,/admin/users/**,/users/**
+#
+#        - id: booking-service
+#          uri: lb://BOOKING-SERVICE
+#          predicates:
+#            - Path=/booking/**
+#
+#        - id: category-service
+#          uri: lb://CATAGORY_MICROSERVICE
+#          predicates:
+#            - Path=/categories/**
+#
+#        - id: service-offering
+#          uri: lb://SERVICE-OFFERING
+#          predicates:
+#            - Path=/service-offering/**
+#
+#        - id: payment-service
+#          uri: lb://PAYMENT-SERVICE
+#          predicates:
+#            - Path=/payment/**
+#
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8070/eureka/
+#
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: gateway,health,info
