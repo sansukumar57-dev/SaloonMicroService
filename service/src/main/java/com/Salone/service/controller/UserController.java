@@ -28,6 +28,12 @@ public class UserController
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
        //  return userRepository.save(user);// it will return created user
     }
+    @GetMapping("/users/profile")// it will handle the post request
+    public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String jwt) throws Exception {
+        User createdUser = userService.getUserFromJwt(jwt);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        //  return userRepository.save(user);// it will return created user
+    }
 
 
 

@@ -2,7 +2,9 @@ package com.Salone.service.service.iml;
 
 import com.Salone.service.exception.UserException;
 import com.Salone.service.model.User;
+import com.Salone.service.payload.dto.KeycloakUserDTO;
 import com.Salone.service.repository.UserRepository;
+import com.Salone.service.service.KeycloackService;
 import com.Salone.service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceIml implements UserService {
     private final UserRepository userRepository;
+    private final KeycloackService keycloackService;
     @Override
     public User createUser(User user) {
         return userRepository.save(user);
@@ -59,4 +62,13 @@ public class UserServiceIml implements UserService {
         existingUser.setPhone(user.getPhone());
         return  userRepository.save(existingUser);
     }
+
+    @Override
+    public User getUserFromJwt(String jwt) throws Exception {
+        KeycloakUserDTO keycloakUserDTO=keycloackService.fetchUserProfileByjwt(jwt);
+        return userRepository.findByEmail(keycloakUserDTO.getEmail());
+
+    }
+
+
 }

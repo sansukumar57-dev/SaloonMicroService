@@ -13,6 +13,6 @@ public class UserRequest {
     private String firstName;
     private String lastName;
     private String email;
-    private List<Credentials> credentials=new ArrayList<>();
+    private List<Credential> credential=new ArrayList<>();
 
 }

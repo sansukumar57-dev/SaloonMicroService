@@ -5,6 +5,7 @@ import com.xyz.salonService.model.Salon;
 import com.xyz.salonService.payload.dto.SalonDTO;
 import com.xyz.salonService.payload.dto.UserDTO;
 import com.xyz.salonService.service.SalonService;
+import com.xyz.salonService.service.client.UserFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,16 @@ import java.util.List;
 public class SalonController {
 
     private final SalonService salonService;
+    private final UserFeignClient userFeignClient;
 
     // http://localhost:5002/salons
     @PostMapping
-    public ResponseEntity<SalonDTO> createSalon(@RequestBody SalonDTO salonDTO){
-        UserDTO userDTO=new UserDTO();
-        userDTO.setId(1L);
+    public ResponseEntity<SalonDTO> createSalon(@RequestBody SalonDTO salonDTO,
+                                                @RequestHeader("Authorization") String jwt) throws Exception {
+        UserDTO userDTO=userFeignClient.getUserProfile(jwt).getBody();
+
+
+
         Salon salon =salonService.createSalon(salonDTO,userDTO);
         SalonDTO salonDTO1= SalonMapper.mapToDTO(salon);
         return ResponseEntity.ok(salonDTO1);
@@ -32,12 +37,11 @@ public class SalonController {
     @PutMapping("/{salonId}")
     public ResponseEntity<SalonDTO> updateSalon(
             @PathVariable Long salonId,
-            @RequestBody SalonDTO salonDTO
+            @RequestBody SalonDTO salonDTO,
+            @RequestHeader("Authorization") String jwt) throws Exception {
 
-    )throws Exception{
+        UserDTO userDTO=userFeignClient.getUserProfile(jwt).getBody();
 
-        UserDTO userDTO=new UserDTO();
-        userDTO.setId(1L);
         System.out.println("-------"+salonId+" email: "+salonDTO.getEmail());
 
         Salon salon =salonService.upadteSalon(salonDTO,userDTO,salonId);
@@ -93,11 +97,15 @@ public class SalonController {
     }
     @GetMapping("/owner")
     public ResponseEntity<SalonDTO> getSalonByOwnerId(
-          //  @PathVariable Long salonId
+
+          @RequestHeader("Authorization") String jwt
     ) throws Exception{
 
-        UserDTO userDTO=new UserDTO();
-        userDTO.setId(1L);
+        UserDTO userDTO=userFeignClient.getUserById(1L).getBody();
+        if(userDTO==null){
+            throw new Exception("user not found jwt...");
+
+        }
         Salon salon =salonService.getSalonByOwnerId(userDTO.getId());
 
         SalonDTO salonDTO=SalonMapper.mapToDTO(salon);
